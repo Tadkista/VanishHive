@@ -606,4 +606,25 @@ const VirusTotalScanner: React.FC = () => {
   );
 };
 
+const fetchVirusTotalData = async () => {
+  setLoading(true);
+  setError(null);
+
+  try {
+    const response = await fetch(`/api/scan?input=${encodeURIComponent(input)}&scanType=${scanType}`);
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} - ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    setResults(data);
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'Failed to fetch data');
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 export default VirusTotalScanner;
