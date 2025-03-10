@@ -606,25 +606,59 @@ const VirusTotalScanner: React.FC = () => {
   );
 };
 
-const fetchVirusTotalData = async () => {
-  setLoading(true);
-  setError(null);
+import { useState } from 'react';
 
-  try {
-    const response = await fetch(`/api/scan?input=${encodeURIComponent(input)}&scanType=${scanType}`);
+const IndexPage = () => {
+  const [input, setInput] = useState(''); // Dane wejściowe
+  const [scanType, setScanType] = useState('url'); // Typ skanowania
+  const [loading, setLoading] = useState(false); // Stan ładowania
+  const [error, setError] = useState<string | null>(null); // Błąd
+  const [results, setResults] = useState<any | null>(null); // Wyniki
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status} - ${response.statusText}`);
+  const fetchVirusTotalData = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/scan?input=${encodeURIComponent(input)}&scanType=${scanType}`);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setResults(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch data');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const data = await response.json();
-    setResults(data);
-  } catch (err) {
-    setError(err instanceof Error ? err.message : 'Failed to fetch data');
-  } finally {
-    setLoading(false);
-  }
+  return (
+    <div>
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Enter URL, file hash, or domain"
+      />
+      <select onChange={(e) => setScanType(e.target.value)} value={scanType}>
+        <option value="url">URL</option>
+        <option value="file">File</option>
+        <option value="domain">Domain</option>
+      </select>
+      <button onClick={fetchVirusTotalData} disabled={loading}>
+        {loading ? 'Loading...' : 'Scan'}
+      </button>
+
+      {error && <p>{error}</p>}
+      {results && <pre>{JSON.stringify(results, null, 2)}</pre>}
+    </div>
+  );
 };
+
+export default IndexPage;
+
 
 
 export default VirusTotalScanner;
