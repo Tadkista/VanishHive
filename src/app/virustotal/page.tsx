@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from "../navbar";
 
+
 // Shared types
 interface ScanStats {
   harmless: number;
@@ -68,7 +69,7 @@ type ScanResponse = FileResponse | UrlResponse | DomainResponse;
 
 const VirusTotalScanner: React.FC = () => {
   const [input, setInput] = useState<string>('');
-  var [apiKey, setApiKey] = useState<string>('');
+  const [apiKey, setApiKey] = useState<string>('');
   const [results, setResults] = useState<ScanResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -77,7 +78,7 @@ const VirusTotalScanner: React.FC = () => {
 
   // Load API key from localStorage if available
   useEffect(() => {
-    var savedApiKey = process.env.NEXT_PUBLIC_VIRUSTOTAL_API_KEY || '';
+    const savedApiKey = localStorage.getItem('virusTotalApiKey');
     if (savedApiKey) {
       setApiKey(savedApiKey);
     }
@@ -109,10 +110,8 @@ const VirusTotalScanner: React.FC = () => {
 
   const validateInput = (): boolean => {
     if (!apiKey.trim()) {
-      //setError('API key is required');
-      //return false;
-      apiKey = "ebc3aa96b22e1cb1c1223acb0c72ddc09f766720cdfc580f0b514ec136161b5a";
-      return true;
+      setError('API key is required');
+      return false;
     }
 
     if (!input.trim()) {
@@ -149,6 +148,10 @@ const VirusTotalScanner: React.FC = () => {
       return;
     }
 
+    // Save API key if checkbox is checked
+    if (saveApiKey) {
+      localStorage.setItem('virusTotalApiKey', apiKey);
+    }
 
     setLoading(true);
     setError(null);
