@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from "../navbar";
 
-localStorage.setItem("virusTotalApiKey", "ebc3aa96b22e1cb1c1223acb0c72ddc09f766720cdfc580f0b514ec136161b5a")
 // Shared types
 interface ScanStats {
   harmless: number;
@@ -78,7 +77,7 @@ const VirusTotalScanner: React.FC = () => {
 
   // Load API key from localStorage if available
   useEffect(() => {
-    const savedApiKey = localStorage.getItem('virusTotalApiKey');
+    const savedApiKey = "ebc3aa96b22e1cb1c1223acb0c72ddc09f766720cdfc580f0b514ec136161b5a";
     if (savedApiKey) {
       setApiKey(savedApiKey);
     }
@@ -148,10 +147,6 @@ const VirusTotalScanner: React.FC = () => {
       return;
     }
 
-    // Save API key if checkbox is checked
-    if (saveApiKey) {
-      localStorage.setItem('virusTotalApiKey', apiKey);
-    }
 
     setLoading(true);
     setError(null);
@@ -610,5 +605,26 @@ const VirusTotalScanner: React.FC = () => {
     </>
   );
 };
+
+const fetchVirusTotalData = async () => {
+  setLoading(true);
+  setError(null);
+
+  try {
+    const response = await fetch(`/api/scan?input=${encodeURIComponent(input)}&scanType=${scanType}`);
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} - ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    setResults(data);
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'Failed to fetch data');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
 export default VirusTotalScanner;
