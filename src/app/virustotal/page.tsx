@@ -77,9 +77,7 @@ const VirusTotalScanner: React.FC = () => {
 
   // Load API key from localStorage if available
   useEffect(() => {
-    const [apiKey, setApiKey] = useState(process.env.NEXT_PUBLIC_API_KEY);
-
-    const savedApiKey = apiKey || '';
+    const savedApiKey = useState(process.env.NEXT_PUBLIC_API_KEY) || '';
     if (savedApiKey) {
       setApiKey(savedApiKey);
     }
