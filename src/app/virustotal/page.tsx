@@ -68,7 +68,7 @@ type ScanResponse = FileResponse | UrlResponse | DomainResponse;
 
 const VirusTotalScanner: React.FC = () => {
   const [input, setInput] = useState<string>('');
-  const [apiKey, setApiKey] = useState<string>('');
+  var [apiKey, setApiKey] = useState<string>('');
   const [results, setResults] = useState<ScanResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
